@@ -3,6 +3,9 @@ import numpy as np
 
 from deep_qlearning import DQNAgent, state_to_features
 
+if not hasattr(np, 'bool8'):
+    np.bool8 = np.bool_
+
 def load_agent(filepath):
     return DQNAgent.load_agent(filepath)
 

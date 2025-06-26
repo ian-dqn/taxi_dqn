@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 
 from visual_qlearning import save_final_plots
 
+if not hasattr(np, 'bool8'):
+    np.bool8 = np.bool_
+
 class DQN(nn.Module):
     """Deep Q-Network"""
     def __init__(self, state_size, action_size, hidden_size=128):

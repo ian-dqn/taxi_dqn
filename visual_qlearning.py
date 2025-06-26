@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from time import sleep
 from IPython.display import clear_output  # If using Jupyter Notebook
 
+if not hasattr(np, 'bool8'):
+    np.bool8 = np.bool_
 
 def main(learning_rate=0.9, discount_rate=0.8, num_episodes=1000):
     # Create Taxi environment
