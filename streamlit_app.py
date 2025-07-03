@@ -96,19 +96,53 @@ if st.session_state.agent is not None:
 
     # st.subheader('Save agent')
     model_name = st.text_input("Agent name to save")
-    if st.button("Save model", use_container_width=True):
-        if model_name:
-            # st.write("Debug Information:")
-            # st.write(f"Agent type: {type(st.session_state.agent)}")
-            # st.write(f"Agent has save method: {hasattr(st.session_state.agent, 'save')}")
-            # st.write(f"Agent methods: {[method for method in dir(st.session_state.agent) if not method.startswith('_')]}")
+    # if st.button("Download model", use_container_width=True):
+    #     if model_name:
+    #         # st.write("Debug Information:")
+    #         # st.write(f"Agent type: {type(st.session_state.agent)}")
+    #         # st.write(f"Agent has save method: {hasattr(st.session_state.agent, 'save')}")
+    #         # st.write(f"Agent methods: {[method for method in dir(st.session_state.agent) if not method.startswith('_')]}")
             
+    #         try:
+    #             print(f'saving model {model_name}')
+    #             st.session_state.agent.save(f'dqn_agents\\{model_name}.pth')
+    #             st.success(f"Model saved as {model_name}.pth")
+    #         except Exception as e:
+    #             st.error(f"Error saving model: {str(e)}")
+    #     else:
+    #         st.warning("Please enter a model name")
+
+
+    if st.button("Prepare Download", use_container_width=True):
+        if model_name:
             try:
-                print(f'saving model {model_name}')
-                st.session_state.agent.save(f'dqn_agents\\{model_name}.pth')
-                st.success(f"Model saved as {model_name}.pth")
+                # Create a BytesIO buffer to save the model
+                buffer = io.BytesIO()
+                
+                # Save the model state dict to the buffer
+                torch.save(st.session_state.agent.q_network.state_dict(), buffer)
+                buffer.seek(0)
+                
+                # Store in session state for download
+                st.session_state.model_buffer = buffer.getvalue()
+                st.session_state.download_ready = True
+                st.session_state.download_filename = f"{model_name}.pth"
+                
+                st.success("Model ready for download!")
+                
             except Exception as e:
-                st.error(f"Error saving model: {str(e)}")
+                st.error(f"Error preparing download: {str(e)}")
         else:
             st.warning("Please enter a model name")
+    
+    # Download button (only show if model is ready)
+    if hasattr(st.session_state, 'download_ready') and st.session_state.download_ready:
+        st.download_button(
+            label="📥 Download Model",
+            data=st.session_state.model_buffer,
+            file_name=st.session_state.download_filename,
+            mime="application/octet-stream",
+            use_container_width=True,
+            help="Download the trained model file"
+        )
 
