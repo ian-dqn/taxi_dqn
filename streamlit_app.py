@@ -2,6 +2,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import torch
 import time
+import io
 
 from deep_qlearning import train_dqn
 from test_agent import evaluate_agent
